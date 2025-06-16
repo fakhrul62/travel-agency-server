@@ -124,7 +124,7 @@ async function run() {
 
     //users api
 
-
+// ================ALL USER ENDPOINTS
     app.post("/users", async (req, res) => {
       const user = req.body;
       const query = { email: user.email };
@@ -139,8 +139,6 @@ async function run() {
       const result = await userCollection.find().toArray();
       res.send(result);
     });
-    
-// Get user profile by email
 app.get("/users/profile/:email", async (req, res) => {
   try {
     const email = req.params.email;
@@ -159,8 +157,6 @@ app.get("/users/profile/:email", async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 });
-
-// Check if user is admin by email
 app.get("/users/admin/:email", async (req, res) => {
   try {
     const email = req.params.email;
@@ -179,6 +175,116 @@ app.get("/users/admin/:email", async (req, res) => {
   }
 });
 
+// TRIPS API ENDPOINTS
+    
+    // POST a new trip
+    app.post("/trips", async (req, res) => {
+      try {
+        const tripData = req.body;
+        
+        // Add server timestamp if not provided
+        if (!tripData.createdAt) {
+          tripData.createdAt = new Date().toISOString();
+        }
+        
+        const result = await tripsCollection.insertOne(tripData);
+        res.status(201).send({
+          success: true,
+          message: "Trip created successfully",
+          insertedId: result.insertedId,
+          tripData
+        });
+      } catch (error) {
+        console.error("Error creating trip:", error);
+        res.status(500).send({
+          success: false,
+          message: "Failed to create trip",
+          error: error.message
+        });
+      }
+    });
+    
+    // GET all trips
+    app.get("/trips", async (req, res) => {
+      try {
+        const { userId } = req.query;
+        let query = {};
+        
+        // If userId is provided, filter by userId
+        if (userId) {
+          query.userId = userId;
+        }
+        
+        const trips = await tripsCollection.find(query).sort({ createdAt: -1 }).toArray();
+        res.status(200).send({
+          success: true,
+          trips
+        });
+      } catch (error) {
+        console.error("Error fetching trips:", error);
+        res.status(500).send({
+          success: false,
+          message: "Failed to fetch trips",
+          error: error.message
+        });
+      }
+    });
+    
+    // GET a specific trip by ID
+    app.get("/trips/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const trip = await tripsCollection.findOne(query);
+        
+        if (!trip) {
+          return res.status(404).send({
+            success: false,
+            message: "Trip not found"
+          });
+        }
+        
+        res.status(200).send({
+          success: true,
+          trip
+        });
+      } catch (error) {
+        console.error("Error fetching trip:", error);
+        res.status(500).send({
+          success: false,
+          message: "Failed to fetch trip",
+          error: error.message
+        });
+      }
+    });
+
+    // DELETE a trip
+    app.delete("/trips/:id", async (req, res) => {
+      try {
+        const id = req.params.id;
+        const query = { _id: new ObjectId(id) };
+        const result = await tripsCollection.deleteOne(query);
+        
+        if (result.deletedCount === 0) {
+          return res.status(404).send({
+            success: false,
+            message: "Trip not found or already deleted"
+          });
+        }
+        
+        res.status(200).send({
+          success: true,
+          message: "Trip deleted successfully"
+        });
+      } catch (error) {
+        console.error("Error deleting trip:", error);
+        res.status(500).send({
+          success: false,
+          message: "Failed to delete trip",
+          error: error.message
+        });
+      }
+    });
 
     // app.patch("/fire-user/:id", verifyToken, async (req, res) => {
     //   const id = req.params.id;
@@ -407,3 +513,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("Travel Agency is running on port: ", port);
 });
+
+
