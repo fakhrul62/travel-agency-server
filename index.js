@@ -185,7 +185,6 @@ app.get("/users/admin/:email", async (req, res) => {
     app.post("/trips", async (req, res) => {
       try {
         const tripData = req.body;
-        console.log("🛬 Received trip POST:", req.body);
         
         // Add server timestamp if not provided
         if (!tripData.createdAt) {
@@ -254,7 +253,6 @@ app.get("/users/admin/:email", async (req, res) => {
           trip
         });
       } catch (error) {
-        console.error("Error fetching trip:", error);
         res.status(500).send({
           success: false,
           message: "Failed to fetch trip",
