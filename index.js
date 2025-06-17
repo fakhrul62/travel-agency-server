@@ -16,7 +16,11 @@ const port = process.env.PORT || 5000;
 //     credentials: true,
 //   })
 // );
-app.use(cors());
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true, // only needed if you're using cookies
+}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -181,6 +185,7 @@ app.get("/users/admin/:email", async (req, res) => {
     app.post("/trips", async (req, res) => {
       try {
         const tripData = req.body;
+        console.log("🛬 Received trip POST:", req.body);
         
         // Add server timestamp if not provided
         if (!tripData.createdAt) {
