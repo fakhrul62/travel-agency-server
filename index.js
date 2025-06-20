@@ -153,9 +153,8 @@ app.get("/users/profile/:email", async (req, res) => {
       return res.status(404).send({ message: "User not found" });
     }
     
-    // Don't send password in response
-    const { password, ...userProfile } = user;
-    res.send(userProfile);
+    // Send the full user object, including password
+    res.send(user);
   } catch (error) {
     console.error("Error fetching user profile:", error);
     res.status(500).send({ error: error.message });

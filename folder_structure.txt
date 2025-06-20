@@ -1,0 +1,15 @@
+travel-agency-server
+│   .env
+│   .gitignore
+│   folder_structure.txt
+│   index.js
+│   package-lock.json
+│   package.json
+│   vercel.json
+│   
+├───.idea
+│       .gitignore
+│       modules.xml
+│       travel-agency-server.iml
+│       vcs.xml
+│       workspace.xml
