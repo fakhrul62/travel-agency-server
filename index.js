@@ -19,8 +19,8 @@ const port = process.env.PORT || 5000;
 
 app.use(cors({
   origin: ["http://localhost:5173",
-      "https://travel-agency-seven-nu.vercel.app/",
-      "https://travel-agency-3ef2sh7by-fakhrul-alams-projects.vercel.app/",
+      "https://travel-agency-eight-kappa.vercel.app/",
+      "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app/",
       "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app/",
     ],
   credentials: true, // only needed if you're using cookies
