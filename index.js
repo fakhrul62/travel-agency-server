@@ -22,6 +22,8 @@ app.use(cors({
       "https://travel-agency-eight-kappa.vercel.app/",
       "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app/",
       "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app/",
+      "https://travel-agency-server-delta.vercel.app/",
+      
     ],
   credentials: true, // only needed if you're using cookies
 }));
