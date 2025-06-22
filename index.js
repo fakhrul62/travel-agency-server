@@ -2,48 +2,19 @@ import express from "express";
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
-import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// CORS configuration
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://travel-agency-eight-kappa.vercel.app",
-  "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-server-delta.vercel.app",
-  "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app"
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow non-browser requests
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200
-};
-
-// Always set CORS headers for all responses (even before cors package)
+// Set Access-Control-Allow-Origin to a single allowed origin (example: https://travel-agency-eight-kappa.vercel.app)
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  }
+  res.header("Access-Control-Allow-Origin", "https://travel-agency-eight-kappa.vercel.app");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  res.header("Vary", "Origin");
   next();
 });
-
-app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
