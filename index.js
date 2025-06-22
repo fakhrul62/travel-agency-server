@@ -10,13 +10,14 @@ const port = process.env.PORT || 5000;
 // Place CORS middleware at the very top and fix allowed origins (no trailing slashes)
 app.use(cors({
   origin: [
-    "http://localhost:5173",
-  "https://travel-agency-eight-kappa.vercel.app",
-  "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-server-delta.vercel.app",
-  "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app",
+   "http://localhost:5173",
+    "https://travel-agency-eight-kappa.vercel.app",
+    "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-server-delta.vercel.app",
+    "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app/trips"
   
   ],
   credentials: true,
@@ -32,7 +33,8 @@ app.use((req, res, next) => {
     "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
     "https://travel-agency-server-delta.vercel.app",
     "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
-    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app"
+    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app/trips"
   ];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
