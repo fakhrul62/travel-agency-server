@@ -30,6 +30,19 @@ const corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200
 };
+
+// Always set CORS headers for all responses (even before cors package)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  }
+  next();
+});
+
 app.use(cors(corsOptions));
 
 app.use(express.json());
