@@ -7,27 +7,30 @@ import "dotenv/config";
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ✅ Configure CORS for both local and deployed environments
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://travel-agency-eight-kappa.vercel.app",
-  "https://travel-agency-eight-kappa.web.app"
-];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
-}));
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
 
-app.options("*", cors()); // handle preflight requests
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://travel-agency-eight-kappa.vercel.app",
+    "https://travel-agency-eight-kappa.web.app"
+  ];
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  }
+
+  if (req.method === "OPTIONS") {
+    return res.status(204).end(); // Preflight success
+  }
+
+  next();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 
