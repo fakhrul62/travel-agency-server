@@ -11,7 +11,12 @@ app.use((req, res, next) => {
   const origin = req.headers.origin;
   const allowedOrigins = [
     "http://localhost:5173",
-    "https://travel-agency-eight-kappa.vercel.app"
+    "https://travel-agency-eight-kappa.vercel.app",
+    "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-server-delta.vercel.app",
+    "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
+    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app"
   ];
 
   if (origin && allowedOrigins.includes(origin)) {
