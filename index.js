@@ -32,25 +32,17 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Fallback: Set CORS headers for all responses (for Vercel/serverless)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin);
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  }
-  next();
-});
-
-// Catch-all for OPTIONS requests
-app.options("*", (req, res) => {
-  res.sendStatus(204);
-});
-
 app.use(express.json());
 app.use(cookieParser());
+
+// Global error handler for debugging
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  if (err.message && err.message.includes('CORS')) {
+    return res.status(403).json({ error: 'CORS error', details: err.message });
+  }
+  res.status(500).json({ error: 'Internal Server Error', details: err.message });
+});
 
 // ✅ MongoDB Connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wwkoz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
