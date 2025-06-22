@@ -7,38 +7,22 @@ import "dotenv/config";
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Define the allowed origins in one place
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://travel-agency-eight-kappa.web.app",
-  "https://travel-agency-eight-kappa.vercel.app",
-  "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-server-delta.vercel.app",
-  "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
-  "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app"
-];
+app.use(cors({
+  origin: (origin, callback) => {
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "https://travel-agency-eight-kappa.vercel.app",
+    ];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 
-// ✳️ Manual CORS handling (must go before express.json)
-app.use((req, res, next) => {
-  const origin = req.headers.origin;
-  if (allowedOrigins.includes(origin)) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-    res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  }
-
-  // For preflight OPTIONS requests
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(204);
-  }
-
-  next();
-});
-
-// Middleware
-app.use(cors({ origin: allowedOrigins, credentials: true }));
+app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 
