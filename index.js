@@ -32,6 +32,23 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// Fallback: Set CORS headers for all responses (for Vercel/serverless)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
+  }
+  next();
+});
+
+// Catch-all for OPTIONS requests
+app.options("*", (req, res) => {
+  res.sendStatus(204);
+});
+
 app.use(express.json());
 app.use(cookieParser());
 
