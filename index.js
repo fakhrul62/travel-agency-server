@@ -7,12 +7,15 @@ import "dotenv/config";
 const app = express();
 const port = process.env.PORT || 5000;
 
+// ✅ Configure CORS for both local and deployed environments
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://travel-agency-eight-kappa.vercel.app",
+  "https://travel-agency-eight-kappa.web.app"
+];
+
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "https://travel-agency-eight-kappa.vercel.app",
-    ];
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -20,14 +23,17 @@ app.use(cors({
     }
   },
   credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"]
 }));
 
-app.options("*", cors());
+app.options("*", cors()); // handle preflight requests
 app.use(express.json());
 app.use(cookieParser());
 
 // ===================== MongoDB Connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wwkoz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -35,7 +41,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-
 
 async function run() {
   try {
@@ -67,16 +72,15 @@ async function run() {
       res.send({ admin: user?.role === "admin" });
     });
 
-    // 🟩 POST /trips (Create trip)
+    // ✅ TRIPS ENDPOINTS
     app.post("/trips", async (req, res) => {
       const trip = req.body;
       trip.createdAt = trip.createdAt || new Date().toISOString();
       const result = await tripsCollection.insertOne(trip);
-      res.status(201).send({ success: true, tripId: result.insertedId });
+      res.status(201).send({ success: true, insertedId: result.insertedId });
     });
 
-    // 🟩 GET /trips (Fetch all)
-    app.get("/trips", async (req, res) => {
+    app.get("/trips", async (_req, res) => {
       const trips = await tripsCollection.find().sort({ createdAt: -1 }).toArray();
       res.send({ success: true, trips });
     });
@@ -100,8 +104,9 @@ async function run() {
         res.status(500).send({ success: false, error: err.message });
       }
     });
+
   } finally {
-    // leave it empty for Vercel (no need to close)
+    // no `await client.close()` — needed for Vercel
   }
 }
 
