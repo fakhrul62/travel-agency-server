@@ -1,5 +1,4 @@
 import express from "express";
-import cors from "cors";
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
@@ -7,25 +6,23 @@ import "dotenv/config";
 const app = express();
 const port = process.env.PORT || 5000;
 
-
+// ✅ Custom CORS Middleware (Works in Vercel Serverless)
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-
   const allowedOrigins = [
     "http://localhost:5173",
-    "https://travel-agency-eight-kappa.vercel.app",
-    "https://travel-agency-eight-kappa.web.app"
+    "https://travel-agency-eight-kappa.vercel.app"
   ];
 
-  if (allowedOrigins.includes(origin)) {
+  if (origin && allowedOrigins.includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
   }
 
   if (req.method === "OPTIONS") {
-    return res.status(204).end(); // Preflight success
+    return res.status(204).end(); // ✅ Preflight OK
   }
 
   next();
@@ -34,7 +31,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(cookieParser());
 
-// ===================== MongoDB Connection
+// ✅ MongoDB Connection
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.wwkoz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
 const client = new MongoClient(uri, {
@@ -47,14 +44,15 @@ const client = new MongoClient(uri, {
 
 async function run() {
   try {
-    const userCollection = client.db("travelAgency").collection("users");
-    const tripsCollection = client.db("travelAgency").collection("trips");
+    const db = client.db("travelAgency");
+    const userCollection = db.collection("users");
+    const tripsCollection = db.collection("trips");
 
-    // ✅ USERS ENDPOINTS
+    // ✅ Users Endpoints
     app.post("/users", async (req, res) => {
       const user = req.body;
-      const existing = await userCollection.findOne({ email: user.email });
-      if (existing) return res.send({ message: "User already exists", insertedId: null });
+      const exists = await userCollection.findOne({ email: user.email });
+      if (exists) return res.send({ message: "User already exists", insertedId: null });
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
@@ -75,12 +73,12 @@ async function run() {
       res.send({ admin: user?.role === "admin" });
     });
 
-    // ✅ TRIPS ENDPOINTS
+    // ✅ Trips Endpoints
     app.post("/trips", async (req, res) => {
       const trip = req.body;
       trip.createdAt = trip.createdAt || new Date().toISOString();
       const result = await tripsCollection.insertOne(trip);
-      res.status(201).send({ success: true, insertedId: result.insertedId });
+      res.status(201).send({ success: true, tripId: result.insertedId });
     });
 
     app.get("/trips", async (_req, res) => {
@@ -94,7 +92,7 @@ async function run() {
         if (!trip) return res.status(404).send({ success: false, message: "Trip not found" });
         res.send({ success: true, trip });
       } catch (err) {
-        res.status(500).send({ success: false, message: "Error fetching trip", error: err.message });
+        res.status(500).send({ success: false, error: err.message });
       }
     });
 
@@ -102,23 +100,26 @@ async function run() {
       try {
         const result = await tripsCollection.deleteOne({ _id: new ObjectId(req.params.id) });
         if (result.deletedCount === 0) return res.status(404).send({ success: false, message: "Trip not found" });
-        res.send({ success: true, message: "Trip deleted successfully" });
+        res.send({ success: true, message: "Trip deleted" });
       } catch (err) {
         res.status(500).send({ success: false, error: err.message });
       }
     });
-
-  } finally {
-    // no `await client.close()` — needed for Vercel
+  } catch (err) {
+    console.error("MongoDB error:", err);
   }
 }
 
 run().catch(console.error);
 
+// ✅ Health check
 app.get("/", (_req, res) => {
-  res.send("Travel Agency Server is RUNNING ✅");
+  res.send("✅ Travel Agency Server is RUNNING");
 });
 
 app.listen(port, () => {
-  console.log("✅ Travel Agency Server running on port:", port);
+  console.log(`✅ Server running on port: ${port}`);
 });
+
+// ✅ Export app for Vercel (optional)
+export default app;
