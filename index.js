@@ -16,6 +16,7 @@ app.use(cors({
   "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
   "https://travel-agency-server-delta.vercel.app",
   "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
+  "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app",
   
   ],
   credentials: true,
