@@ -20,20 +20,7 @@ app.use(cors({
   
   ],
   credentials: true,
-}));
-
-// Explicitly handle preflight OPTIONS requests for all routes
-app.options('*', cors({
-  origin: [
-    "http://localhost:5173",
-    "https://travel-agency-eight-kappa.vercel.app",
-    "https://travel-agency-nwn846xfo-fakhrul-alams-projects.vercel.app",
-    "https://travel-agency-git-main-fakhrul-alams-projects.vercel.app",
-    "https://travel-agency-server-delta.vercel.app",
-    "https://travel-agency-bu3n0al34-fakhrul-alams-projects.vercel.app",
-    "https://travel-agency-server-3n1wr27f2-fakhrul-alams-projects.vercel.app"
-  ],
-  credentials: true,
+  optionsSuccessStatus: 200, // For legacy browser support and serverless
 }));
 
 app.use(express.json());
