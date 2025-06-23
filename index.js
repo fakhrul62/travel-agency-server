@@ -13,9 +13,14 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
   res.header("Vary", "Origin");
+  // Log all request headers for debugging
   if (req.method === "OPTIONS") {
-    // Respond to preflight requests directly
-    return res.sendStatus(204);
+    console.log("[OPTIONS] Headers:", req.headers);
+    // Respond to preflight requests with 200 and empty body
+    return res.status(200).end();
+  }
+  if (req.originalUrl.startsWith("/trips") || req.originalUrl.startsWith("/users")) {
+    console.log(`[${req.method}] ${req.originalUrl} Headers:`, req.headers);
   }
   next();
 });
