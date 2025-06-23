@@ -83,7 +83,8 @@ async function run() {
       const trip = req.body;
       trip.createdAt = trip.createdAt || new Date().toISOString();
       const result = await tripsCollection.insertOne(trip);
-      res.status(201).send({ success: true, tripId: result.insertedId });
+      // res.status(201).send({ success: true, tripId: result.insertedId });
+      res.status(201).send({ success: true, insertedId: result.insertedId });
     });
 
     app.get("/trips", async (_req, res) => {
