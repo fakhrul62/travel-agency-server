@@ -23,6 +23,12 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(cookieParser());
 
+// Log all requests for debugging
+app.use((req, res, next) => {
+  console.log(`[${req.method}] ${req.originalUrl}`);
+  next();
+});
+
 // Global error handler for debugging
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
