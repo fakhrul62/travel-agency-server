@@ -2,28 +2,21 @@ import express from "express";
 import { MongoClient, ObjectId, ServerApiVersion } from "mongodb";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Set CORS headers for all requests, including OPTIONS
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "https://travel-agency-eight-kappa.vercel.app");
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
-  res.header("Vary", "Origin");
-  // Log all request headers for debugging
-  if (req.method === "OPTIONS") {
-    console.log("[OPTIONS] Headers:", req.headers);
-    // Respond to preflight requests with 200 and empty body
-    return res.status(200).end();
-  }
-  if (req.originalUrl.startsWith("/trips") || req.originalUrl.startsWith("/users")) {
-    console.log(`[${req.method}] ${req.originalUrl} Headers:`, req.headers);
-  }
-  next();
-});
+app.use(cors({
+  origin: [
+    'https://travel-agency-eight-kappa.vercel.app',
+    'http://localhost:3000', // for local development
+    'http://localhost:5173'  // for Vite dev server
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+}));
 
 app.use(express.json());
 app.use(cookieParser());
